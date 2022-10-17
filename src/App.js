@@ -11,7 +11,8 @@ function App() {
     // Will hold all of the dice values for the opponents
     const[opponentDice, setOpponentDice] = React.useState([])
     const[hasGameStarted, setHasGameStarted] = React.useState(false)
-    const[numberOfOpponents, setNumberOfOpponents] = React.useState(0)
+    // Will hold the number of opponents the user wanted to play against
+    const[numberOfOpponents, setNumberOfOpponents] = React.useState()
 
 
     function generateDice() {
@@ -25,12 +26,19 @@ function App() {
     /* Will be used to update the value when the user changes the number of opponents they
        want to play against */
     function handleChange(event) {
+        setNumberOfOpponents(event.target.value)
+    }
+
+    /* This will be executed once the start game button is clicked, it will take the number 
+       of opponents the user wants to play against, and it will start the game */
+    function handleStart(event) {
+        event.preventDefault()
 
     }
 
     return(
         <main>
-            {!hasGameStarted && <StartGame handleChange={handleChange} />}
+            {!hasGameStarted && <StartGame handleChange={handleChange} numberOfOpponents={numberOfOpponents} handleStart={handleStart}/>}
         </main>
     )
 }
