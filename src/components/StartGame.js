@@ -15,8 +15,9 @@ function StartGame(props) {
                 <option value={2}>2</option>
                 <option value={3}>3</option>
             </select>
-            </form>
             <button>Start Game</button>
+            </form>
+            
         </div>
     )
 }

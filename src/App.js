@@ -1,7 +1,8 @@
-import OpponentHand from "./components/OpponentHand"
+import Opponent from "./components/Opponent"
 import CurrentBid from "./components/CurrentBid"
 import UserHand from "./components/UserHand"
 import StartGame from "./components/StartGame"
+import { nanoid } from 'nanoid'
 import React from "react"
 
 function App() {
@@ -9,15 +10,22 @@ function App() {
     // Will hold all of the dice values for the user
     const[userDice, setUserDice] = React.useState(generateDice())
     // Will hold all of the dice values for the opponents
-    const[opponentDice, setOpponentDice] = React.useState([])
+    const[opponents, setOpponents] = React.useState([{}])
     const[hasGameStarted, setHasGameStarted] = React.useState(false)
     // Will hold the number of opponents the user wanted to play against
     const[numberOfOpponents, setNumberOfOpponents] = React.useState()
 
+    let opponentElements
 
-    function generateDice() {
+    /**
+     * This function will generate an array of random numbers between 1 and 6,
+     * this will be executed after every round
+     * @param {*} numOfDice The number of dice that is left in a hand
+     * @returns An array of numbers that will represent their hand for a round
+     */
+    function generateDice(numOfDice) {
         const newDice = []
-        for(let i = 0; i < 5; i++) {
+        for(let i = 0; i < numOfDice; i++) {
             newDice.push(Math.ceil(Math.random() * 6))
         }
         return newDice
@@ -34,6 +42,26 @@ function App() {
     function handleStart(event) {
         event.preventDefault()
 
+        // Sets the hasGameStarted to true, which will hide the StartGame component and start the game
+        setHasGameStarted(prevState => !prevState)
+
+        /* Will call the generateOpponents function and store the returned array to state, this array will
+           represent all of the opponents the user will play against*/
+        setOpponents(generateOpponents())
+
+        opponentElements = opponents.map(opponent => <Opponent opponent={opponent}/>)
+    }
+
+    function generateOpponents() {
+        const opponentsArray = []
+        for(let i = 0; i < numberOfOpponents; i++) {
+            opponentsArray.push({
+                id: nanoid(),
+                numberOfDiceLeft: 5,
+                hand: generateDice(5)
+            })
+        }
+        return opponentsArray
     }
 
     return(
