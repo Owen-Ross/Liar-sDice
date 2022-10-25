@@ -4,6 +4,7 @@ import UserHand from "./components/UserHand"
 import StartGame from "./components/StartGame"
 import { nanoid } from 'nanoid'
 import React from "react"
+import './style.css'
 
 function App() {
 
@@ -14,8 +15,6 @@ function App() {
     const[hasGameStarted, setHasGameStarted] = React.useState(false)
     // Will hold the number of opponents the user wanted to play against
     const[numberOfOpponents, setNumberOfOpponents] = React.useState()
-
-    let opponentElements
 
     /**
      * This function will generate an array of random numbers between 1 and 6,
@@ -48,8 +47,6 @@ function App() {
         /* Will call the generateOpponents function and store the returned array to state, this array will
            represent all of the opponents the user will play against*/
         setOpponents(generateOpponents())
-
-        opponentElements = opponents.map(opponent => <Opponent opponent={opponent}/>)
     }
 
     function generateOpponents() {
@@ -64,9 +61,17 @@ function App() {
         return opponentsArray
     }
 
+    function generateOpponentElements() {
+        const opponentElements = opponents.map(opponent => <Opponent opponent={opponent}/>)
+        return opponentElements
+    }
+
     return(
-        <main>
+        <main className="app--container">
             {!hasGameStarted && <StartGame handleChange={handleChange} numberOfOpponents={numberOfOpponents} handleStart={handleStart}/>}
+            <div>
+                {hasGameStarted && generateOpponentElements()}
+            </div>
         </main>
     )
 }
