@@ -9,7 +9,7 @@ function StartGame(props) {
             <select 
                 id="numOpponents"
                 value={props.numberOfOpponents}
-                onChange={(event) => props.handleChange(event)}
+                onChange={props.handleChange}
                 name="numOpponents"
             >
                 <option value={1}>1</option>

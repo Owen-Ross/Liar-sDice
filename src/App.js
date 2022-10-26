@@ -14,7 +14,7 @@ function App() {
     const[opponents, setOpponents] = React.useState([{}])
     const[hasGameStarted, setHasGameStarted] = React.useState(false)
     // Will hold the number of opponents the user wanted to play against
-    const[numberOfOpponents, setNumberOfOpponents] = React.useState()
+    const[numberOfOpponents, setNumberOfOpponents] = React.useState(1)
 
     /**
      * This function will generate an array of random numbers between 1 and 6,
@@ -62,7 +62,7 @@ function App() {
     }
 
     function generateOpponentElements() {
-        const opponentElements = opponents.map(opponent => <Opponent opponent={opponent}/>)
+        const opponentElements = opponents.map(opponent => <Opponent key={opponent.id} opponent={opponent}/>)
         return opponentElements
     }
 
