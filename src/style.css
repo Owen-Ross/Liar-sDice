@@ -6,6 +6,36 @@ body {
     margin: 0;
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    height: 65px;
+    padding: 20px;
+}
+
+.header--title {
+    margin: 0 auto;
+}
+
+.header--popup-button {
+    border-radius: 6px;
+    background-color: #056dc2;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.header--popup-title {
+    text-align: center;
+}
+
+.header--popup-close-button {
+    cursor: pointer;
+    position: absolute;
+    display: block;
+}
+
 .start-game--button {
     display: block;
     margin: 0 auto;
