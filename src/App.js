@@ -10,7 +10,11 @@ import './style.css'
 function App() {
 
     // Will hold all of the dice values for the user
-    const[userDice, setUserDice] = React.useState(generateDice())
+    const[user, setUser] = React.useState({
+        id: nanoid(),
+        numberOfDiceLeft: 5,
+        hand: generateDice(5)
+    })
     // Will hold all of the dice values for the opponents
     const[opponents, setOpponents] = React.useState([{}])
     // Will hold a boolenan value that will signal if the user has started the game or not
@@ -91,6 +95,7 @@ function App() {
             {!hasGameStarted && <StartGame handleChange={handleChange} numberOfOpponents={numberOfOpponents} handleStart={handleStart}/>}
             <div>
                 {hasGameStarted && generateOpponentElements()}
+                {hasGameStarted && <UserHand user={user}/>}
             </div>
         </main>
     )
