@@ -6,6 +6,13 @@ body {
     margin: 0;
 }
 
+.app--opponent-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
 .header {
     display: flex;
     align-items: center;
@@ -66,6 +73,13 @@ body {
 #numOpponents {
     display: block;
     margin: 0 auto;
+}
+
+.opponent--container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .userhand--dice-container {

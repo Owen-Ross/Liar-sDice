@@ -1,9 +1,10 @@
+import React from 'react'
 import '../style.css'
 
 function UserHand(props) {
 
-    const diceArray = props.user.hand.map(dice => 
-        <div className="userhand--dice-container">
+    const diceArray = props.user.hand.map((dice, index) => 
+        <div className="userhand--dice-container" key={index}>
             <h3 className="userhand--dice-face">{dice}</h3>
         </div>
     )

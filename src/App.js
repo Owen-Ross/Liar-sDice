@@ -6,6 +6,7 @@ import StartGame from "./components/StartGame"
 import { nanoid } from 'nanoid'
 import React from "react"
 import './style.css'
+import UserBid from "./components/UserBid"
 
 function App() {
 
@@ -21,6 +22,12 @@ function App() {
     const[hasGameStarted, setHasGameStarted] = React.useState(false)
     // Will hold the number of opponents the user wanted to play against
     const[numberOfOpponents, setNumberOfOpponents] = React.useState(1)
+    const[currentQuantity, setCurrentQuantity] = React.useState(1)
+    const[currentFace, setCurrentFace] = React.useState(1)
+    const[isUsersTurn, setIsUsersTurn] = React.useState(false)
+    const [quantityArray, setQuatityArray] = React.useState([])
+    const [faceArray, setFaceArray] = React.useState([])
+
 
     /**
      * This function will generate an array of random numbers between 1 and 6,
@@ -44,6 +51,15 @@ function App() {
         setNumberOfOpponents(event.target.value)
     }
 
+    function handleQuantity(event) {
+        setCurrentQuantity(event.target.value)
+    }
+
+    function handleFace(event) {
+        setCurrentFace(event.target.value)
+    }
+
+
     /* This will be executed once the start game button is clicked, it will take the number 
        of opponents the user wants to play against, and it will start the game */
     function handleStart(event) {
@@ -55,6 +71,8 @@ function App() {
         /* Will call the generateOpponents function and store the returned array to state, this array will
            represent all of the opponents the user will play against*/
         setOpponents(generateOpponents())
+
+        setIsUsersTurn(prevState => !prevState)
     }
 
     /**
@@ -84,18 +102,36 @@ function App() {
      * @returns An array filled with Opponent components
      */
     function generateOpponentElements() {
-        const opponentElements = opponents.map(opponent => <Opponent key={opponent.id} opponent={opponent}/>)
+        const opponentElements = opponents.map((opponent, index) => <Opponent key={opponent.id} opponent={opponent} name={"Opponent " + (index + 1)}/>)
         // Returning an array filled with opponent components
         return opponentElements
     }
+
+    React.useEffect(() => {
+        const quantityOptions = []
+        const faceOptions = []
+
+        for(let i = currentQuantity; i < 6; i++) {
+            quantityOptions.push(<option value={i} key={i}>{i}</option>)
+        }
+
+        for(let i = currentFace; i < 7; i++) {
+            faceOptions.push(<option value={i} key={i}>{i}</option>)
+        }
+        setQuatityArray(quantityOptions)
+        setFaceArray(faceOptions)
+    }, [isUsersTurn])
 
     return(
         <main className="app--container">
             <Header />
             {!hasGameStarted && <StartGame handleChange={handleChange} numberOfOpponents={numberOfOpponents} handleStart={handleStart}/>}
             <div>
-                {hasGameStarted && generateOpponentElements()}
-                {hasGameStarted && <UserHand user={user}/>}
+                {hasGameStarted && <div className="app--opponent-container">{generateOpponentElements()}</div>}
+                {isUsersTurn && <UserBid  quantityArray={quantityArray} faceArray={faceArray} handleQuantity={handleQuantity} 
+                                    handleFace={handleFace} isUsersTurn={isUsersTurn}/>}
+                {hasGameStarted && <UserHand user={user} />
+                }
             </div>
         </main>
     )
