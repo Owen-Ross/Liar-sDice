@@ -1,19 +1,26 @@
 import React from "react"
+import '../style.css'
 
 function UserBid(props) {
     
+    const quantityOptions = props.quantityArray.map(quantity => 
+                            <option key={quantity} value={quantity}>{quantity}</option>)
+
+    const faceOptions = props.faceArray.map(face => 
+                            <option key={face} value={face}>{face}</option>)
+
     return(
-        <div>
-            <h3>Place your bid</h3>
-            <form>
-                <h4>Quantity</h4>
+        <div className="userbid--container">
+            <h3 className="userbid--title">Place your bid</h3>
+            <form onSubmit={(event) => props.handleBid(event)}>
+                <h4 className="userbid--quantity-title">Quantity</h4>
                 <select 
                     id="quantity"
                     value={props.currentQuantity}
                     onChange={props.handleQuantity}
                     name="quantity"
                 >
-                    {props.quantityArray}
+                    {quantityOptions}
                 </select>
                 <br/>
                 <h4>Dice Face</h4>
@@ -23,9 +30,9 @@ function UserBid(props) {
                     onChange={props.handleFace}
                     name="face"
                 >
-                    {props.faceArray}
+                    {faceOptions}
                 </select>
-                <button>Place Bid</button>
+                <button className="userbid--bid-button">Place Bid</button>
             </form>
         </div>
     )

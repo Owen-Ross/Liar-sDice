@@ -22,10 +22,15 @@ function App() {
     const[hasGameStarted, setHasGameStarted] = React.useState(false)
     // Will hold the number of opponents the user wanted to play against
     const[numberOfOpponents, setNumberOfOpponents] = React.useState(1)
+    // Will hold the quantity value of the current bid
     const[currentQuantity, setCurrentQuantity] = React.useState(1)
+    // Will hold the face value of the current bid
     const[currentFace, setCurrentFace] = React.useState(1)
+    // Will hold a boolean value that will signal if it is currently the user's turn
     const[isUsersTurn, setIsUsersTurn] = React.useState(false)
+    // Will hold the array of the quantity values that can be selected for a bid
     const [quantityArray, setQuatityArray] = React.useState([])
+    // Will hold the array of the face values that can be selected for a bid
     const [faceArray, setFaceArray] = React.useState([])
 
 
@@ -51,10 +56,12 @@ function App() {
         setNumberOfOpponents(event.target.value)
     }
 
+    /* Will be used to update the currentQuantity value every time the user selects a value */
     function handleQuantity(event) {
         setCurrentQuantity(event.target.value)
     }
 
+    /* Will be used to update the currentFace value every time the user selects a value */
     function handleFace(event) {
         setCurrentFace(event.target.value)
     }
@@ -107,16 +114,24 @@ function App() {
         return opponentElements
     }
 
+    function handleBid(event) {
+        event.preventDefault()
+
+        setIsUsersTurn(prevState => !prevState)
+    }
+
+    // Populate both of the quantity and face arrays with all of the values that can be selected for a bid
     React.useEffect(() => {
         const quantityOptions = []
         const faceOptions = []
 
+        /* Loops through all of the quantity options that can be selected for a bid, starting at the quantity in the current bid */
         for(let i = currentQuantity; i < 6; i++) {
-            quantityOptions.push(<option value={i} key={i}>{i}</option>)
+            quantityOptions.push(i)
         }
 
         for(let i = currentFace; i < 7; i++) {
-            faceOptions.push(<option value={i} key={i}>{i}</option>)
+            faceOptions.push(i)
         }
         setQuatityArray(quantityOptions)
         setFaceArray(faceOptions)
@@ -128,8 +143,9 @@ function App() {
             {!hasGameStarted && <StartGame handleChange={handleChange} numberOfOpponents={numberOfOpponents} handleStart={handleStart}/>}
             <div>
                 {hasGameStarted && <div className="app--opponent-container">{generateOpponentElements()}</div>}
+                {hasGameStarted && <CurrentBid />}
                 {isUsersTurn && <UserBid  quantityArray={quantityArray} faceArray={faceArray} handleQuantity={handleQuantity} 
-                                    handleFace={handleFace} isUsersTurn={isUsersTurn}/>}
+                                    handleFace={handleFace} handleBid={handleBid}/>}
                 {hasGameStarted && <UserHand user={user} />
                 }
             </div>
