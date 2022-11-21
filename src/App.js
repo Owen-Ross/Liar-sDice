@@ -143,7 +143,7 @@ function App() {
             {!hasGameStarted && <StartGame handleChange={handleChange} numberOfOpponents={numberOfOpponents} handleStart={handleStart}/>}
             <div>
                 {hasGameStarted && <div className="app--opponent-container">{generateOpponentElements()}</div>}
-                {hasGameStarted && <CurrentBid />}
+                {hasGameStarted && <CurrentBid currentFace={currentFace} currentQuantity={currentQuantity} isUsersTurn={isUsersTurn} />}
                 {isUsersTurn && <UserBid  quantityArray={quantityArray} faceArray={faceArray} handleQuantity={handleQuantity} 
                                     handleFace={handleFace} handleBid={handleBid}/>}
                 {hasGameStarted && <UserHand user={user} />

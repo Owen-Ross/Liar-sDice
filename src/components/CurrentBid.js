@@ -1,9 +1,12 @@
+import '../style.css'
+
 function CurrentBid(props) {
     return(
-        <div>
+        <div className="current-bid--container">
             <h2>Current Bid</h2>
-            <h3>Current Bid Here</h3>
-            <button>Next</button>
+            <h3>Quantity: {props.currentQuantity}</h3>
+            <h3>Face: {props.currentFace}</h3>
+            {!props.isUsersTurn && <button>Next</button>} 
         </div>
     )
 }

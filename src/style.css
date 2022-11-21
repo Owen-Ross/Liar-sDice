@@ -81,6 +81,16 @@ body {
     flex-direction: column;
 }
 
+.opponent--icon {
+    width: 90px;
+    height: 90px;
+}
+
+.current-bid--container {
+    text-align: center;
+    margin: 0 auto;
+}
+
 .userbid--container {
     display: block;
     margin: 0 auto;
