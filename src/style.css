@@ -92,7 +92,8 @@ body {
 }
 
 .userbid--container {
-    display: block;
+    display: flex;
+    flex-direction: column;
     margin: 0 auto;
 }
 
@@ -103,6 +104,14 @@ body {
 .userbid--quantity-title {
     display: block;
     text-align: center;
+}
+
+.userbid--selection-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    
 }
 
 .userbid--bid-button {
