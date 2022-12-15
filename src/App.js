@@ -32,7 +32,7 @@ function App() {
     const [quantityArray, setQuatityArray] = React.useState([])
     // Will hold the array of the face values that can be selected for a bid
     const [faceArray, setFaceArray] = React.useState([])
-
+    const [currentPlayer, setCurrentPlayer] = React.useState({})
 
     /**
      * This function will generate an array of random numbers between 1 and 6,
@@ -114,10 +114,60 @@ function App() {
         return opponentElements
     }
 
+    /**
+     * This function will be triggered when the user submits their bid, then the current player will be
+     * set to the first opponent and the isUsersTurn will be set ot false
+     */
     function handleBid(event) {
         event.preventDefault()
 
+        // set isUsersTurn to false, becuase it is no longer the users turn
         setIsUsersTurn(prevState => !prevState)
+        // set the currentPlayer to the first opponent
+        setCurrentPlayer(opponents[0])
+    }
+
+    /**
+     * This function will be triggered when the next button is clicked, it will determine what the opponent's bid
+     * will be or if they will challenege the previous bid
+     */
+    function handleNext() {
+        // declaring the variables that will hold all of the face and quantity options the opponent to choose from
+        const quantityOptions = []
+        const faceOptions = []
+        // this will determine whether the opponent will choose to challenge the previous bid or place one
+        const option = Math.floor(Math.random() * 2)
+        // declaring the variables that will hold the face and quantity for the opponents bid
+        let quantityBid
+        let faceBid
+
+        // populating the quatityOptions array with all of the possible quantity values the opponent can choose
+        for(let i = currentQuantity; i < quantityArray.length; i++) {
+            // adding the value of i to the quatityOptions array
+            quantityOptions.push(i)
+        }
+
+        // populating the faceOptions array with all of the possible face values the opponent can choose
+        for(let i = currentFace; i < faceArray.length; i++) {
+            // adding the value of i to the faceOptions array
+            faceOptions.push(i)
+        }
+
+        /* checking if the option value is equal to 1, if it is then the previous bid will be challenged, if
+           it's not, then the opponent will place a bid */
+        if(option === 1) {
+            challengeBid()
+        } else {
+            /* getting a random value from the quantityOptions and faceOptions arrays that will be the opponent's bid,
+               then the face and quantity will be set as the new current bid */
+            setCurrentQuantity(quantityOptions[Math.floor(Math.random() * quantityOptions.length)])
+            setCurrentFace(faceOptions[Math.floor(Math.random() * faceOptions.length)])
+        }
+
+    }
+
+    function challengeBid() {
+        console.log("bid challenged")
     }
 
     // Populate both of the quantity and face arrays with all of the values that can be selected for a bid
@@ -130,6 +180,7 @@ function App() {
             quantityOptions.push(i)
         }
 
+        /* Loops through all of the face options that can be selected for a bid, starting at the face in the current bid */
         for(let i = currentFace; i < 7; i++) {
             faceOptions.push(i)
         }
@@ -143,7 +194,7 @@ function App() {
             {!hasGameStarted && <StartGame handleChange={handleChange} numberOfOpponents={numberOfOpponents} handleStart={handleStart}/>}
             <div>
                 {hasGameStarted && <div className="app--opponent-container">{generateOpponentElements()}</div>}
-                {hasGameStarted && <CurrentBid currentFace={currentFace} currentQuantity={currentQuantity} isUsersTurn={isUsersTurn} />}
+                {hasGameStarted && <CurrentBid currentFace={currentFace} currentQuantity={currentQuantity} isUsersTurn={isUsersTurn} handleNext={handleNext} />}
                 {isUsersTurn && <UserBid  quantityArray={quantityArray} faceArray={faceArray} handleQuantity={handleQuantity} 
                                     handleFace={handleFace} handleBid={handleBid}/>}
                 {hasGameStarted && <UserHand user={user} />
