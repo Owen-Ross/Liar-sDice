@@ -137,9 +137,6 @@ function App() {
         const faceOptions = []
         // this will determine whether the opponent will choose to challenge the previous bid or place one
         const option = Math.floor(Math.random() * 2)
-        // declaring the variables that will hold the face and quantity for the opponents bid
-        let quantityBid
-        let faceBid
 
         // populating the quatityOptions array with all of the possible quantity values the opponent can choose
         for(let i = currentQuantity; i < quantityArray.length; i++) {
@@ -164,10 +161,102 @@ function App() {
             setCurrentFace(faceOptions[Math.floor(Math.random() * faceOptions.length)])
         }
 
+        // checking to see if the next turn is the user's turn
+        if(opponents.findIndex(currentPlayer) === opponents.length - 1) {
+            // if the next turn is the user's turn, then setting the state to the user object
+            setCurrentPlayer(user)
+        } else {
+            // otherwise set the current player state to the next opponent object in the array
+            setCurrentPlayer(opponents[opponents.findIndex(currentPlayer) + 1])
+        }
+
     }
 
+    /**
+     * This function will be executed when a bid is challenged, it will get the bid placer and 
+     * the player that challenged the bid
+     */
     function challengeBid() {
+        // checking if the bid that was challenged came from the user
+        if(currentPlayer.id === opponents[0].id) {
+            // calling the checkBid function, passing in the user and the first opponent
+            checkBid(user, opponents[0])
+        } else {
+            // getting the player that placed the bid
+            const challengedUser = opponents[opponents.findIndex(currentPlayer) - 1]
+            /* calling the checkBid function, passing in the player that placed the bid and 
+               the one that challeneged it */
+            checkBid(challengedUser, currentPlayer)
+        }
+
         console.log("bid challenged")
+    }
+
+    /**
+     * This function will be executed when ever a bid is challenged, it will check to see if player that placed the bid
+     * was successful or not, which ever player was not successful will loose a die from their hand
+     * @param {*} bidPlacer The opponent/user object that placed the bid
+     * @param {*} bidChallenger The opponent/user object that challenged the bid
+     */
+    function checkBid(bidPlacer, bidChallenger) {
+        let handQuantity
+
+        // looping through the hand to see if the bid placer has the same amount of faces as in the bid
+        for(let i = 0; i < bidPlacer.hand.length; i++) {
+            // checking to see if the bid placer has the face in their hand that they bid
+            if(currentFace === bidPlacer.hand[i]) {
+                // incrementing the value of the handQuantity variable
+                handQuantity++
+            }
+        }
+        
+        /* checking to see if the number of dice faces in the bid placers hand matched the bid, if it 
+           does then the player that places the bid looses a die, if it does not then the player that 
+           challeneged the bid looses a die */
+        if(handQuantity >= currentQuantity) {
+            removeDice(bidPlacer.id)
+        } else {
+            removeDice(bidChallenger.id)
+        }
+
+
+    }
+
+    /**
+     * This function will be used to remove a die from a player's hand
+     * @param {*} id The id of the player that is getting a die removed from their hand
+     */
+    function removeDice(id) {
+        // checking if the id that was passed into the function is the user's or not
+        if(id === user.id) {
+            /* removing a die from the user's hand by subtracting 1 form the numberOfDiceLeft value and
+               set the new user value to state*/
+            setUser(prevUser => { return {
+                ...prevUser, numberOfDiceLeft: (prevUser.numberOfDiceLeft - 1)
+            }})
+            // will execute if the id that was passed in isn't from the user
+        } else {
+            // storing the new array with the updated numberOfDiceValues in state
+            setOpponents(prevOpponents => {
+                const newArray = [] 
+                /* looping through the array of opponents to find the opponent object with the id that
+                   was passed into the function */
+                for(let i = 0; i < prevOpponents.length; i++) {
+                    const newOpponent = prevOpponents[i]
+                    // checking to see if the current opponent in the array matches the id that was passed in
+                    if(newOpponent.id === id) {
+                        /* if the id of the current opponent matches the id that was passed in, then remove
+                           a die from their hand and push that opponent object to the array of opponents */
+                        newArray.push({...newOpponent, numberOfDiceLeft: (newOpponent.numberOfDiceLeft - 1)})
+                        // will be executed if the opponent id doesn't match the one that was passed in
+                    } else {
+                        // pushing the opponent object to the opponent array
+                        newArray.push(newOpponent)
+                    }
+                }
+                return newArray
+            })
+        }
     }
 
     // Populate both of the quantity and face arrays with all of the values that can be selected for a bid
