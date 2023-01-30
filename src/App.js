@@ -159,16 +159,18 @@ function App() {
                then the face and quantity will be set as the new current bid */
             setCurrentQuantity(quantityOptions[Math.floor(Math.random() * quantityOptions.length)])
             setCurrentFace(faceOptions[Math.floor(Math.random() * faceOptions.length)])
-        }
 
-        // checking to see if the next turn is the user's turn
-        if(opponents.findIndex(currentPlayer) === opponents.length - 1) {
+            // checking to see if the next turn is the user's turn
+            if(opponents.indexOf(currentPlayer) === opponents.length - 1) {
             // if the next turn is the user's turn, then setting the state to the user object
             setCurrentPlayer(user)
-        } else {
+            } else {
             // otherwise set the current player state to the next opponent object in the array
-            setCurrentPlayer(opponents[opponents.findIndex(currentPlayer) + 1])
+            setCurrentPlayer(opponents[opponents.indexOf(currentPlayer) + 1])
+            }
         }
+
+
 
     }
 
@@ -183,13 +185,22 @@ function App() {
             checkBid(user, opponents[0])
         } else {
             // getting the player that placed the bid
-            const challengedUser = opponents[opponents.findIndex(currentPlayer) - 1]
+            const challengedUser = opponents[opponents.indexOf(currentPlayer) - 1]
             /* calling the checkBid function, passing in the player that placed the bid and 
                the one that challeneged it */
             checkBid(challengedUser, currentPlayer)
         }
 
         console.log("bid challenged")
+        
+        // checking to see if the next turn is the user's turn
+        if(opponents.indexOf(currentPlayer) === opponents.length - 1) {
+            // if the next turn is the user's turn, then setting the state to the user object
+            setCurrentPlayer(user)
+        } else {
+            // otherwise set the current player state to the next opponent object in the array
+            setCurrentPlayer(opponents[opponents.indexOf(currentPlayer) + 1])
+        }
     }
 
     /**
