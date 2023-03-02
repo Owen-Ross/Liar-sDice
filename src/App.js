@@ -58,12 +58,12 @@ function App() {
 
     /* Will be used to update the currentQuantity value every time the user selects a value */
     function handleQuantity(event) {
-        setCurrentQuantity(event.target.value)
+        setCurrentQuantity(parseInt(event.target.value))
     }
 
     /* Will be used to update the currentFace value every time the user selects a value */
     function handleFace(event) {
-        setCurrentFace(event.target.value)
+        setCurrentFace(parseInt(event.target.value))
     }
 
 
@@ -79,7 +79,7 @@ function App() {
            represent all of the opponents the user will play against*/
         setOpponents(generateOpponents())
 
-        setIsUsersTurn(prevState => !prevState)
+        setIsUsersTurn(true)
     }
 
     /**
@@ -122,7 +122,7 @@ function App() {
         event.preventDefault()
 
         // set isUsersTurn to false, becuase it is no longer the users turn
-        setIsUsersTurn(prevState => !prevState)
+        setIsUsersTurn(false)
         // set the currentPlayer to the first opponent
         setCurrentPlayer(opponents[0])
     }
@@ -132,42 +132,37 @@ function App() {
      * will be or if they will challenege the previous bid
      */
     function handleNext() {
-        // declaring the variables that will hold all of the face and quantity options the opponent to choose from
-        const quantityOptions = []
-        const faceOptions = []
+
         // this will determine whether the opponent will choose to challenge the previous bid or place one
         const option = Math.floor(Math.random() * 2)
-
-        // populating the quatityOptions array with all of the possible quantity values the opponent can choose
-        for(let i = currentQuantity; i < quantityArray.length; i++) {
-            // adding the value of i to the quatityOptions array
-            quantityOptions.push(i)
-        }
-
-        // populating the faceOptions array with all of the possible face values the opponent can choose
-        for(let i = currentFace; i < faceArray.length; i++) {
-            // adding the value of i to the faceOptions array
-            faceOptions.push(i)
-        }
 
         /* checking if the option value is equal to 1, if it is then the previous bid will be challenged, if
            it's not, then the opponent will place a bid */
         if(option === 1) {
             challengeBid()
         } else {
-            /* getting a random value from the quantityOptions and faceOptions arrays that will be the opponent's bid,
-               then the face and quantity will be set as the new current bid */
-            setCurrentQuantity(quantityOptions[Math.floor(Math.random() * quantityOptions.length)])
-            setCurrentFace(faceOptions[Math.floor(Math.random() * faceOptions.length)])
+            // declaring the variables that will hold all of the face and quantity options the opponent can choose from
+            const quantityBidOptions = []
+            const faceBidOptions = []
 
-            // checking to see if the next turn is the user's turn
-            if(opponents.indexOf(currentPlayer) === opponents.length - 1) {
-            // if the next turn is the user's turn, then setting the state to the user object
-            setCurrentPlayer(user)
-            } else {
-            // otherwise set the current player state to the next opponent object in the array
-            setCurrentPlayer(opponents[opponents.indexOf(currentPlayer) + 1])
+            // populating the quantityBidOptions array with all of the possible quantity values the opponent can choose
+            for(let i = currentQuantity; i < 6; i++) {
+                // adding the value of i to the quantityBidOptions array
+                quantityBidOptions.push(i)
             }
+
+            // populating the faceBidOptions array with all of the possible face values the opponent can choose
+            for(let i = currentFace; i < 7; i++) {
+                // adding the value of i to the faceBidOptions array
+                faceBidOptions.push(i)
+            }
+
+            /* getting a random value from the quantityBidOptions and faceBidOptions arrays that will be the opponent's bid,
+               then the face and quantity will be set as the new current bid */
+            setCurrentQuantity(quantityBidOptions[Math.floor(Math.random() * quantityBidOptions.length)])
+            setCurrentFace(faceBidOptions[Math.floor(Math.random() * faceBidOptions.length)])
+
+            switchToNextPlayer()
         }
 
 
@@ -190,17 +185,7 @@ function App() {
                the one that challeneged it */
             checkBid(challengedUser, currentPlayer)
         }
-
-        console.log("bid challenged")
         
-        // checking to see if the next turn is the user's turn
-        if(opponents.indexOf(currentPlayer) === opponents.length - 1) {
-            // if the next turn is the user's turn, then setting the state to the user object
-            setCurrentPlayer(user)
-        } else {
-            // otherwise set the current player state to the next opponent object in the array
-            setCurrentPlayer(opponents[opponents.indexOf(currentPlayer) + 1])
-        }
     }
 
     /**
@@ -210,7 +195,7 @@ function App() {
      * @param {*} bidChallenger The opponent/user object that challenged the bid
      */
     function checkBid(bidPlacer, bidChallenger) {
-        let handQuantity
+        let handQuantity = 0
 
         // looping through the hand to see if the bid placer has the same amount of faces as in the bid
         for(let i = 0; i < bidPlacer.hand.length; i++) {
@@ -225,11 +210,13 @@ function App() {
            does then the player that places the bid looses a die, if it does not then the player that 
            challeneged the bid looses a die */
         if(handQuantity >= currentQuantity) {
-            removeDice(bidPlacer.id)
-        } else {
             removeDice(bidChallenger.id)
+        } else {
+            removeDice(bidPlacer.id)
         }
 
+        setCurrentFace(1)
+        setCurrentQuantity(1)
 
     }
 
@@ -243,7 +230,7 @@ function App() {
             /* removing a die from the user's hand by subtracting 1 form the numberOfDiceLeft value and
                set the new user value to state*/
             setUser(prevUser => { return {
-                ...prevUser, numberOfDiceLeft: (prevUser.numberOfDiceLeft - 1)
+                ...prevUser, numberOfDiceLeft: (prevUser.numberOfDiceLeft - 1), hand: generateDice(prevUser.numberOfDiceLeft - 1)
             }})
             // will execute if the id that was passed in isn't from the user
         } else {
@@ -258,15 +245,33 @@ function App() {
                     if(newOpponent.id === id) {
                         /* if the id of the current opponent matches the id that was passed in, then remove
                            a die from their hand and push that opponent object to the array of opponents */
-                        newArray.push({...newOpponent, numberOfDiceLeft: (newOpponent.numberOfDiceLeft - 1)})
+                        newArray.push({...newOpponent, numberOfDiceLeft: (newOpponent.numberOfDiceLeft - 1), 
+                            hand: generateDice(newOpponent.numberOfDiceLeft - 1)})
                         // will be executed if the opponent id doesn't match the one that was passed in
                     } else {
                         // pushing the opponent object to the opponent array
-                        newArray.push(newOpponent)
+                        newArray.push({...newOpponent, hand: generateDice(newOpponent.numberOfDiceLeft)})
                     }
                 }
                 return newArray
             })
+        }
+        switchToNextPlayer()
+    }
+
+
+    function switchToNextPlayer() {
+        // checking to see if the next turn is the user's turn
+        if(opponents.indexOf(currentPlayer) === (opponents.length - 1)) {
+            // if the next turn is the user's turn, then setting the state to the user object
+            setCurrentPlayer(user)
+            setIsUsersTurn(true)
+        } else if(currentPlayer.id === user.id) {
+            setCurrentPlayer(opponents[0])
+            setIsUsersTurn(false)
+        } else {
+            // otherwise set the current player state to the next opponent object in the array
+            setCurrentPlayer(prevOpponent => opponents[opponents.indexOf(prevOpponent) + 1])
         }
     }
 
